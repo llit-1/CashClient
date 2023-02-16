@@ -1,0 +1,510 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RKNet_CashClient"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
+        xmlns:Models="clr-namespace:RKNet_CashClient.Models" x:Class="RKNet_CashClient.MainWindow"
+        mc:Ignorable="d"        
+        Title="MainWindow" Height="768" Width="1024" Topmost="True" ResizeMode="NoResize" WindowStartupLocation="Manual" Visibility="Visible" AllowsTransparency="True" WindowStyle="None" ShowInTaskbar="False" Background="{x:Null}">
+
+    <Window.Resources>
+        <!--стиль для кнопки доставки-->
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
+        <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+
+        <!--стиль для кнопки доставки-->
+        <Style x:Key="ButtonStyleDelivery" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" CornerRadius="3" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <!--<Trigger Property="IsMouseOver" Value="true">
+                                -->
+                            <!--<Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>-->
+                            <!--<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>-->
+                            <!--
+                            </Trigger>-->
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="#b8b8b8"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF8B8A89"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+        <Style TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+    </Window.Resources>
+
+
+
+    <Grid Visibility="Visible" d:IsLocked="True">
+
+        <!--иконка в трее-->
+        <tb:TaskbarIcon x:Name="TaskbarIcon" IconSource="/ico/logo.ico" Visibility="Visible" ToolTipText="Кассовый клиент RKNet" TrayLeftMouseDown="TaskbarIcon_TrayLeftMouseDown" d:IsHidden="True" d:IsLocked="True">
+            <!--контекстное меню-->
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu StaysOpen="false">
+                    <MenuItem Header="Тест печати" Click="TestPrint"/>
+                    <MenuItem Name="TrayPrinters" Header="Принтер" />
+                    <Separator />
+                    <MenuItem Header="Закрыть" Click="TaskbarIconClose"/>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
+
+        <!--кнопка доставки-->
+        <Button x:Name="ButtonDelivery" Style="{DynamicResource ButtonStyleDelivery}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="140" Click="ButtonDelivery_Click" Margin="0,10,51,0" Height="45" BorderBrush="Black" Foreground="Black" FontWeight="Bold" FontSize="24" Cursor="" Background="White" d:IsHidden="True" d:IsLocked="True">
+            <Grid Width="140" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                <Grid x:Name="ButtonDeliveryGrid" Margin="0,0,0,0">
+                    <Rectangle x:Name="ButtonDeliveryRect" Fill="Red" Visibility="Hidden"/>
+                    <Image Source="/image/deliveryCar.png" RenderTransformOrigin="0.47,0.537" HorizontalAlignment="Left" Margin="5,4,0,12" Height="25" Visibility="Hidden"/>
+                    <TextBlock x:Name="ButtonDeliveryNew" Margin="0,3,70,17" FontSize="18" HorizontalAlignment="Right" Foreground="Red" UseLayoutRounding="False" Text="0" TextAlignment="Center"/>
+                    <TextBlock x:Name="ButtonDeliveryAccepted" Margin="30,3,0,17" FontSize="18" HorizontalAlignment="Center" Foreground="#FF178800" UseLayoutRounding="False" Text="0" TextAlignment="Center"/>
+                    <TextBlock x:Name="ButtonDeliveryCancelled" Margin="100,3,0,17" FontSize="18" HorizontalAlignment="Left" Foreground="Black" UseLayoutRounding="False" Text="0" TextAlignment="Center"/>
+                    <TextBlock x:Name="ButtonDeliverySlash" Margin="70,3,0,11" FontSize="18" HorizontalAlignment="Left" Foreground="#FF616161" UseLayoutRounding="False" Padding="0,0,20,4" Text="/    /" Width="50" Visibility="Hidden"/>
+                    <Image x:Name="ButtonDeliveryLoading" gif:ImageBehavior.AnimatedSource="/gif/linear.gif" Margin="30,0,0,5" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="200" d:IsHidden="True" />
+                    <Image x:Name="ButtonDeliveryLogoConnected" Source="/image/cashclientLogo.png" HorizontalAlignment="Left" Width="30" Margin="5,2,0,0" VerticalAlignment="Top" />
+                    <Image x:Name="ButtonDeliveryLogoDisconnected" Source="/image/cashclientLogoRed.png" HorizontalAlignment="Left" Width="30" Margin="5,2,0,0" VerticalAlignment="Top" d:IsHidden="True" />
+                    <Label x:Name="ButtonDeliveryTT" Content="---------------------------" HorizontalAlignment="Center" Margin="32,23,0,0" VerticalAlignment="Top" FontWeight="Normal" FontSize="8" Height="21" Background="{x:Null}" Foreground="#FF545454"/>
+                    <Label x:Name="ButtonDeliveryVersion" Content="v - - -" HorizontalAlignment="Center" Margin="0,0,103,-5" VerticalAlignment="Bottom" FontWeight="Normal" FontSize="7" Background="{x:Null}" Foreground="#FF545454"/>
+                    <Ellipse x:Name="ButtonDeliveryConnectionState" HorizontalAlignment="Left" Height="8" Margin="2,31,0,0" VerticalAlignment="Top" Width="8" Fill="#FFBBBBBB" Visibility="Hidden"/>
+                </Grid>
+
+                <Grid d:IsHidden="True" Visibility="Hidden">
+                    <Image gif:ImageBehavior.AnimatedSource="gif/linear.gif" Margin="34,12,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="200" d:IsHidden="True" />
+                    <Image Source="/ico/logo.ico" HorizontalAlignment="Left" Width="35" Margin="5,0,0,0" d:IsHidden="True" />
+                    <Label Content="загрузка" Padding="0,0,0,0" HorizontalAlignment="Center" Margin="35,-3,0,25" VerticalAlignment="Center" FontWeight="Normal" FontSize="16" d:IsHidden="True"/>
+                </Grid>
+
+            </Grid>
+
+
+        </Button>
+
+        <!--форма заказа-->
+        <Grid x:Name="OrderForm" Margin="0,20,0,0" Background="#FFFBFBFB" Visibility="Visible" Panel.ZIndex="2" VerticalAlignment="Center" HorizontalAlignment="Center" Height="700" Width="629" d:IsHidden="True">
+            <Border BorderBrush="#FFB6B6B6" BorderThickness="1"/>
+            <fa:FontAwesome Icon="Close" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="48" FontStyle="Normal" FontWeight="Normal" Margin="558,7,0,0" MouseLeftButtonDown="CloseOrderForm" />
+            <Label x:Name="OrderFormHeader" Content="Новый заказ с доставкой" HorizontalAlignment="Left" Margin="20,9,0,0" VerticalAlignment="Top" FontSize="24" FontWeight="Bold"/>
+            <Label x:Name="CancelReason" Content="причина отмены" HorizontalAlignment="Left" Margin="19,50,0,0" VerticalAlignment="Top" Width="583" Background="Red" FontWeight="Bold" Foreground="White"/>
+            <Image x:Name="OrderFormTypeImage" HorizontalAlignment="Left" Margin="363,14,0,0" VerticalAlignment="Top" Source="/image/ya_logo.png" Height="36" Width="149"/>
+            <Button x:Name="OrderFormButtonCancel" Style="{DynamicResource ButtonStyleDelivery}" Content="Отклонить" HorizontalAlignment="Right" Margin="0,0,15,20" VerticalAlignment="Bottom" Height="65" Width="175" FontSize="24" Background="#FFBF0000" Foreground="White" BorderBrush="#FFBFBFBF" Click="OrderFormButtonCancel_Click"/>
+            <Button x:Name="OrderFormButtonAccept" Style="{DynamicResource ButtonStyleDelivery}" Content="Принять" HorizontalAlignment="Right" Margin="0,0,225,20" VerticalAlignment="Bottom" Height="65" Width="175" FontSize="24" Background="#FF4CBF00" Foreground="White" BorderBrush="#FFBFBFBF" Click="OrderFormButtonAccept_Click"/>
+            <Button x:Name="OrderFormButtonFinish" Style="{DynamicResource ButtonStyleDelivery}" Content="Выдан" HorizontalAlignment="Right" Margin="0,0,225,20" VerticalAlignment="Bottom" Height="65" Width="175" FontSize="24" Background="#FF4CBF00" Foreground="White" BorderBrush="#FFBFBFBF" Click="OrderFormButtonFinish_Click"/>
+            <Button x:Name="OrderFormButtonPrint" Style="{DynamicResource ButtonStyleDelivery}" Content="Печать" HorizontalAlignment="Right" Margin="0,0,435,20" VerticalAlignment="Bottom" Height="65" Width="175" FontSize="24" Background="#FF0086BF" Foreground="White" BorderBrush="#FFBFBFBF" Click="OrderFormButtonPrint_Click"/>
+            <Border BorderBrush="#FFADADAD" BorderThickness="1" Margin="25,75,0,0" Height="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="580"/>
+            <Label Content="№ заказа:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,79,0,0"/>
+            <Label Content="Создан:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="214,79,0,0"/>
+            <Label Content="Покупатель:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,105,0,0"/>
+            <Label Content="Телефон:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="372,104,0,0"/>
+            <Label Content="Прибытие курьера:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="372,79,0,0"/>
+            <Label Content="Приборы:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,130,0,0"/>
+            <Label Content="Комментарий:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="168,130,0,0"/>
+            <TextBox x:Name="OrderFormNumber" Height="20" TextWrapping="Wrap" Width="70" Visibility="Hidden" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="114,82,0,0"/>
+            <TextBox x:Name="OrderFormAgregatorNumber" Height="20" TextWrapping="Wrap" Width="100" Visibility="Visible" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="114,82,0,0"/>
+            <TextBox x:Name="OrderFormCreated" Height="20" TextWrapping="Wrap" Width="90" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="268,82,0,0"/>
+            <TextBox x:Name="OrderFormPhone" Height="20" TextWrapping="Wrap" Width="172" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="432,107,0,0"/>
+            <TextBox x:Name="OrderFormCustomer" Height="20" TextWrapping="Wrap" Width="244" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="114,107,0,0"/>
+            <TextBox x:Name="OrderFormCourierArrivement" Height="20" TextWrapping="Wrap" Width="110" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="494,82,0,0"/>
+            <TextBox x:Name="OrderFormPersons" Height="20" TextWrapping="Wrap" Width="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="116,132,0,0"/>
+            <TextBox x:Name="OrderFormComment" Height="20" TextWrapping="Wrap" Width="340" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,132,25,0"/>
+            <Border BorderBrush="#FFADADAD" BorderThickness="1" Height="1" Width="580" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25,159,0,0"/>
+            <ListView x:Name="OrderFormItems" Margin="16,170,16,145" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="FontSize" Value="16" />
+                        <Setter Property="BorderThickness" Value="0"/>
+
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="Black" />
+                                <Setter Property="BorderThickness" Value="0" />
+                            </Trigger>
+
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Foreground" Value="Black" />
+                                <Setter Property="BorderThickness" Value="0" />
+                            </Trigger>
+                        </Style.Triggers>
+
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Позиция" Width="310" HeaderStringFormat="">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding RkName}" HorizontalAlignment="Left" FontWeight="Normal" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Цена" Width="70">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding MarketPrice}" HorizontalAlignment="Center" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Количество" Width="90">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Quantity}" HorizontalAlignment="Center" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Стоимость" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Cost}" HorizontalAlignment="Center" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Label Content="Итого:" HorizontalAlignment="Left" Margin="362,550,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="24"/>
+            <TextBlock x:Name="OrderFormTotal" HorizontalAlignment="Left" Margin="462,555,0,0" TextWrapping="Wrap" Text="0р" VerticalAlignment="Top" Height="33" Width="133" FontSize="24" FontWeight="Bold"/>
+            <Canvas Margin="0,60,35,103" Background="#00000000"/>
+        </Grid>
+
+        <!--форма списка заказов-->
+        <Grid x:Name="OrdersListForm" Margin="0,20,0,0" Background="#FFFBFBFB" Panel.ZIndex="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="669" Width="920">
+            <Border BorderBrush="#FFB6B6B6" BorderThickness="1" Margin="0,0,0,0"/>
+            <fa:FontAwesome Icon="Close" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="48" FontStyle="Normal" FontWeight="Normal" Margin="0,5,15,0" MouseLeftButtonDown="CloseOrdersListWindow" />
+            <Label Content="Список заказов с доставкой" HorizontalAlignment="Left" Margin="10,9,0,0" VerticalAlignment="Top" FontSize="24" FontWeight="Bold"/>
+            <Border BorderBrush="#FFADADAD" BorderThickness="1" Margin="15,60,15,0" Height="1" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+
+            <ListView x:Name="OrdersListView" Margin="15,70,15,15" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" IsSynchronizedWithCurrentItem="False">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="FontSize" Value="16" />
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Background" Value="#FFDFFFD4"/>
+                        <Setter Property="Height" Value="40"/>
+                        <Setter Property="Margin" Value="10,10,10,0"/>
+                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OrdersListView_ItemClick" />
+
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="Black" />
+                                <Setter Property="Background" Value="#FFDFFFD4"/>
+                                <Setter Property="BorderThickness" Value="0" />
+                            </Trigger>
+
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Foreground" Value="Black" />
+                                <Setter Property="Background" Value="#FFDFFFD4"/>
+                                <Setter Property="BorderThickness" Value="0" />
+                            </Trigger>
+
+                            <DataTrigger Binding="{Binding Status}" Value="автоотмена">
+                                <Setter Property="Background" Value="LightGray" />
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Status}" Value="отменён">
+                                <Setter Property="Background" Value="WhiteSmoke" />
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Status}" Value="отменён тт">
+                                <Setter Property="Background" Value="WhiteSmoke" />
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Status}" Value="отменён агрегатором">
+                                <Setter Property="Background" Value="WhiteSmoke" />
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Status}" Value="новый">
+                                <Setter Property="Background" Value="#FFFFC4C4" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Status}" Value="выдан">
+                                <Setter Property="Background" Value="White" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Status}" Value="доставлен">
+                                <Setter Property="Background" Value="White" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Status}" Value="произведен самовывоз">
+                                <Setter Property="Background" Value="White" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Status}" Value="доставляется">
+                                <Setter Property="Background" Value="White" />
+                            </DataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Создан" Width="0" HeaderStringFormat="">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Created}" HorizontalAlignment="Left" FontWeight="Normal" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Номер" Width="0">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Number}" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Заказ" Width="200">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding AgregatorNumber}" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Покупатель" Width="250
+                                        ">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Customer}" HorizontalAlignment="Left" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Стоимость" Width="100
+                                        ">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding TotalSum}" HorizontalAlignment="Center" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Оператор" Width="150">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Operator}" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Статус" Width="170">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Status}" HorizontalAlignment="Left" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                    </GridView>
+                </ListView.View>
+
+                <Models:OrderElement Created="09.03 10:00" Number="234" AgregatorNumber="eatsId-1221" Operator="Яндекс Еда" Status="принят на тт" TotalSum="134р" Customer="Петров Петр Иванович"/>
+                <Models:OrderElement Customer="123213" Created="1233" Number="123213" AgregatorNumber="1221-123-1" Operator="123213" Status="новый" TotalSum="21321" isActive="True"/>
+            </ListView>
+        </Grid>
+
+        <!--форма подтверждения-->
+        <Grid x:Name="ConfirmForm" Margin="0,0,0,0" Background="#FF6D6D6D" HorizontalAlignment="Center" VerticalAlignment="Center" Width="800" Height="300" Panel.ZIndex="3" d:IsHidden="True">
+            <Label Content="Заказ будет отменён, продолжить?" HorizontalAlignment="Center" Margin="0,0,0,150" VerticalAlignment="Center" Background="{x:Null}" Foreground="White" FontSize="36" FontWeight="Bold"/>
+            <Button x:Name="ButtonConfirmCancel" Style="{DynamicResource ButtonStyleDelivery}" Content="НЕТ" HorizontalAlignment="Center" Margin="0,140,300,0" VerticalAlignment="Center" Height="65" Width="200" FontSize="24" Background="#FF9C9C9C" Foreground="White" BorderBrush="#FFBFBFBF" Click="ButtonConfirmCancel_Click"/>
+            <Button x:Name="ButtonConfirmOk" Style="{DynamicResource ButtonStyleDelivery}" Content="ДА" HorizontalAlignment="Center" Margin="300,140,0,0" VerticalAlignment="Center" Height="65" Width="200" FontSize="24" Background="#FFBF0000" Foreground="White" BorderBrush="#FFBFBFBF" Click="ButtonConfirmOk_Click"/>
+        </Grid>
+
+        <!--макет чека-->
+        <Grid x:Name="PrintGrid" Background="White" Visibility="Visible" d:IsHidden="True">
+            <FlowDocumentScrollViewer x:Name="PrintDocument" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="295">
+                <FlowDocument FontSize="12" LineHeight="7" FontFamily="Arial">
+
+                    <BlockUIContainer>
+                        <Image x:Name="PrintOrderTypeImage" Source="/image/ya_logo.png" Width="200" Margin="0,0,0,10" />
+                    </BlockUIContainer>
+
+                    <Paragraph>
+                        <Run FontWeight="Bold">№ заказа:</Run>
+                        <Run x:Name="PrintOrderNumber">0000</Run>
+                    </Paragraph>
+                    <Paragraph>
+                        <Run FontWeight="Bold">создан:</Run>
+                        <Run x:Name="PrintOrderCreated">00.00.0000</Run>
+                    </Paragraph>
+                    <Paragraph>
+                        <Run FontWeight="Bold">прибытие курьера:</Run>
+                        <Run x:Name="PrintOrderCourierArrivement">чч:мм</Run>
+                    </Paragraph>
+                    <Paragraph>
+                        <Run FontWeight="Bold">телефон курьера:</Run>
+                        <Run x:Name="PrintOrderCourierPhone">+70001112233</Run>
+                    </Paragraph>
+                    <Paragraph>
+                        
+                    </Paragraph>
+                    <Paragraph>
+                        <Run FontWeight="Bold">покупатель:</Run>
+                        <Run x:Name="PrintOrderCustomer">Фамилия Имя Отчество</Run>
+                    </Paragraph>
+                    <Paragraph>
+                        <Run FontWeight="Bold">телефон покупателя:</Run>
+                        <Run x:Name="PrintOrderClientPhone">+70001112233</Run>
+                    </Paragraph>
+                    <Paragraph>
+                        <Run FontWeight="Bold">телефон колл-центра:</Run>
+                        <Run x:Name="PrintOrderCallCentrPhone">+70001112233</Run>
+                    </Paragraph>
+                    <Paragraph>
+
+                    </Paragraph>
+                    <Paragraph>
+                        <Run FontWeight="Bold">количество приборов:</Run>
+                        <Run x:Name="PrintOrderPersons">0</Run>
+                    </Paragraph>
+                    <Paragraph>
+                        <Run FontWeight="Bold">комментарий:</Run>
+                        <Run x:Name="PrintOrderComment">пожелания клиента, или дополнителная информация от агрегатора.</Run>
+                    </Paragraph>
+
+                    <Table Margin="Auto,20,Auto,26" CellSpacing="5">
+                        <Table.Columns>
+                            <TableColumn Width="137" />
+                            <TableColumn Width="34" />
+                            <TableColumn Width="34" />
+                            <TableColumn Width="40" />
+                        </Table.Columns>
+                        <TableRowGroup FontSize="10" FontWeight="Bold">
+                            <TableRow>
+                                <TableCell>
+                                    <Paragraph>Позиция</Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph>Цена</Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph>Кол-во</Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph>Сумма</Paragraph>
+                                </TableCell>
+                            </TableRow>
+                        </TableRowGroup>
+
+                        <TableRowGroup x:Name="PrintItems">
+
+                            <TableRow>
+                                <TableCell BorderThickness="0,0,10,0">
+                                    <Paragraph>позиция 01</Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph>000р</Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph TextAlignment="Center">0шт</Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph>0000р</Paragraph>
+                                </TableCell>
+                            </TableRow>
+
+                            <TableRow>
+                                <TableCell BorderThickness="0,0,10,0">
+                                    <Paragraph>позиция 02</Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph>000р</Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph TextAlignment="Center">0шт</Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph>0000р</Paragraph>
+                                </TableCell>
+                            </TableRow>
+
+                            <TableRow>
+                                <TableCell BorderThickness="0,0,10,0">
+                                    <Paragraph>позиция 03</Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph>000р</Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph TextAlignment="Center">0шт</Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph>0000р</Paragraph>
+                                </TableCell>
+                            </TableRow>
+
+                        </TableRowGroup>
+
+                    </Table>
+
+                    <Paragraph FontWeight="Bold" TextAlignment="Right" Margin="Auto,Auto,Auto,0" BorderThickness="0,0,0,23" FontSize="16">
+                        <Run x:Name="PrintOrderTotal">ИТОГО: 0000р</Run>
+                    </Paragraph>
+
+                </FlowDocument>
+            </FlowDocumentScrollViewer>
+        </Grid>
+
+    </Grid>
+</Window>
