@@ -8,6 +8,6 @@ namespace RKNet_CashClient.Models
 {
     internal class CashClient
     {
-        internal static string Version = "1.4.01";
+        internal static string Version = "1.4.0.2";
     }
 }

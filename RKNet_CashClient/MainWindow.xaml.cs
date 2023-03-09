@@ -1094,7 +1094,7 @@ namespace RKNet_CashClient
                         PrintOrderNumber.Text = deliveryOrder.originalOrderId;
                         PrintOrderCustomer.Text = deliveryOrder.customer.name;
                         PrintOrderClientPhone.Text = deliveryOrder.customer.phone;
-                        PrintOrderCourierPhone.Text = deliveryOrder.courier.phone;
+                        PrintOrderCourierPhone.Text = string.Empty;
                         PrintOrderCallCentrPhone.Text = deliveryOrder.callCenter.phone;
                         PrintOrderCourierArrivement.Text = String.Empty;
                         PrintOrderPersons.Text = deliveryOrder.personsQuantity.ToString();
