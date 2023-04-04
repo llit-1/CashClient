@@ -321,6 +321,10 @@
     <Resource Include="image\ya_logo.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\cash_client_updater\cash_client_updater.csproj">
+      <Project>{f304cbea-8f76-461d-8d97-899e8687f9f7}</Project>
+      <Name>cash_client_updater</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RKNet_CashMonitor\RKNet_CashMonitor.csproj">
       <Project>{821b83d5-a433-44a8-bed0-b6a59e322144}</Project>
       <Name>RKNet_CashMonitor</Name>

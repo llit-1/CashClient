@@ -25,6 +25,7 @@ namespace cash_client_updater
 
         static private string updaterVersion = "2.0.3";
         static private string processName = "RKNet_CashClient";
+        static private string cashMonitorProcessName = "RKNet_CashMonitor";
         static private bool islogEnable = true;
 
         static void Main(string[] args)
@@ -45,18 +46,21 @@ namespace cash_client_updater
                 // закрытие клиента
                 var n = 1;
                 var proc = Process.GetProcessesByName(processName);
-
+                var procMonitor = Process.GetProcessesByName(cashMonitorProcessName);
                 try
                 {
-                    while (proc.Length > 0)
+                    while (proc.Length > 0 || procMonitor.Length > 0)
                     {
                         Console.WriteLine("попытка закрытия клиента #" + n + "...");
                         LocalLog("попытка закрытия клиента #" + n + "...");
                         proc[0].Kill();
                         proc[0].WaitForExit();
+                        procMonitor[0].Kill();
+                        procMonitor[0].WaitForExit();
                         n++;
                         proc = Process.GetProcessesByName(processName);
-                    }
+                        procMonitor = Process.GetProcessesByName(cashMonitorProcessName);
+                    }                                      
 
                     Thread.Sleep(5 * 1000); // Пауза 5 секунд
                     Console.WriteLine("клиент закрыт");

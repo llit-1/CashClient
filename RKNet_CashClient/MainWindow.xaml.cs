@@ -860,10 +860,10 @@ namespace RKNet_CashClient
                 signalConnection.OrderAccept(true, orderId);
                 OrderForm.Visibility = Visibility.Hidden;
                 ButtonDeliveryLoading.Visibility = Visibility.Visible;
-                //if (order != null)
-                //{
-                //    PrintOrder(order);
-                //}
+                if (order != null)
+                {
+                    PrintOrder(order);
+                }
             }
             catch (Exception ex)
             {
