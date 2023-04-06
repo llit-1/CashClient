@@ -864,6 +864,7 @@ namespace RKNet_CashClient
                 {
                     PrintOrder(order);
                 }
+                Task.Delay(100).Wait();
             }
             catch (Exception ex)
             {
