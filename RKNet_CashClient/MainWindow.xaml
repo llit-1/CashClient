@@ -99,7 +99,7 @@
         </tb:TaskbarIcon>
 
         <!--кнопка доставки-->
-        <Button x:Name="ButtonDelivery" Style="{DynamicResource ButtonStyleDelivery}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="140" Click="ButtonDelivery_Click" Margin="0,10,51,0" Height="45" BorderBrush="Black" Foreground="Black" FontWeight="Bold" FontSize="24" Cursor="" Background="White" d:IsHidden="True" d:IsLocked="True">
+        <Button x:Name="ButtonDelivery" Style="{DynamicResource ButtonStyleDelivery}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="140" Click="ButtonDelivery_Click" Margin="0,0,0,50" Height="45" BorderBrush="Black" Foreground="Black" FontWeight="Bold" FontSize="24" Cursor="" Background="White" d:IsHidden="True" d:IsLocked="True">
             <Grid Width="140" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
                 <Grid x:Name="ButtonDeliveryGrid" Margin="0,0,0,0">

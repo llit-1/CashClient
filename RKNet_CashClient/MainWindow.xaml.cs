@@ -162,9 +162,9 @@ namespace RKNet_CashClient
                 this.Left = screenWidth - this.Width;
 
                 // размеры и положение кнопки доставки
-                var deliveryButton_Up = double.Parse(appSettings["deliveryButton_Up"]);
-                var deliveryButton_Right = double.Parse(appSettings["deliveryButton_Right"]);
-                ButtonDelivery.Margin = new Thickness(0, deliveryButton_Up, deliveryButton_Right, 0);
+                //var deliveryButton_Up = double.Parse(appSettings["deliveryButton_Up"]);
+                //var deliveryButton_Right = double.Parse(appSettings["deliveryButton_Right"]);
+                //ButtonDelivery.Margin = new Thickness(0, deliveryButton_Up, deliveryButton_Right, 0);
                 ButtonDelivery.Width = double.Parse(appSettings["deliveryButton_Width"]);
                 ButtonDelivery.Height = double.Parse(appSettings["deliveryButton_Height"]);
 
