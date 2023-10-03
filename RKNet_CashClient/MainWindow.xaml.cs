@@ -25,6 +25,7 @@ using RKNet_CashClient.Models;
 using RKNet_Model;
 using System.IO;
 using System.Threading;
+using RKNet_CashClient.Jobs;
 
 namespace RKNet_CashClient
 {
@@ -179,6 +180,7 @@ namespace RKNet_CashClient
 
                 ConfirmForm.Visibility = Visibility.Hidden;
                 PrintGrid.Visibility = Visibility.Hidden;
+                
             }
             catch (Exception ex)
             {
@@ -209,6 +211,7 @@ namespace RKNet_CashClient
             updateTimer.Interval = (1000 * 60 * 60);
             updateTimer.Elapsed += OnTimerEvent;
             updateTimer.Enabled = true;
+            Task.Run(ControlOrders);
         }
         // ----------------------------------------------------------------------------------
         // Подключение к кассовому хабу событий на Апи сервере
@@ -650,7 +653,7 @@ namespace RKNet_CashClient
         // ФОРМА ЗАКАЗА
         // ----------------------------------------------------------------------------------
         // Открыть форму 
-        private void OpenOrderForm(int orderId)
+        public void OpenOrderForm(int orderId)
         {
             try
             {
@@ -1163,6 +1166,12 @@ namespace RKNet_CashClient
             {
                 Logging.LocalLog($"ошибка метода PrintOrder: {ex.Message}");
             }            
-        }        
+        }
+
+        public async Task ControlOrders()
+        {
+            OrdersStatusControl ordersStatusControl = new OrdersStatusControl(this);
+            await ordersStatusControl.StartControl();
+        }
     }
 }

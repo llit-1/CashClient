@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace RKNet_CashClient.Models
 {
-    internal class CashClient
+    public class IDListBoxItem : ListBoxItem
     {
-        internal static string Version = "1.4.7.0";
+        public int ID { get; set; }
     }
 }
